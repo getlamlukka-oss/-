@@ -135,33 +135,64 @@ let activePoster=null;
 async function makePoster(x){
  activePoster=x;
  const photos=Array.isArray(x.images)&&x.images.length?x.images:(x.image?[x.image]:[]);
- const cols=photos.length<=1?1:photos.length<=4?2:3,rows=Math.max(1,Math.ceil(photos.length/cols));
- const cellH=340,gap=18,pad=42,header=270,footer=250;
+ // จัดจำนวนคอลัมน์และความสูงตามจำนวนรูป โดยคงลำดับรูปที่ผู้ใช้เพิ่มไว้
+ const count=photos.length;
+ const cols=count<=1?1:count<=4?2:count<=9?3:4;
+ const gap=18,pad=42,header=280,footer=270;
+ const cellH=count<=1?440:count<=4?360:count<=9?300:260;
+ const rows=Math.max(1,Math.ceil(count/cols));
+ const cellW=(1080-pad*2-gap*(cols-1))/cols;
  const canvas=$('posterCanvas'),ctx=canvas.getContext('2d');
- canvas.width=1080;canvas.height=header+rows*cellH+(rows-1)*gap+footer;
+ const totalH=header+rows*cellH+(rows-1)*gap+footer;
+ if(totalH>30000){alert('มีรูปจำนวนมากเกินขีดจำกัดการสร้างภาพป้ายในครั้งเดียว กรุณาแบ่งทำป้ายเป็นชุด');return}
+ canvas.width=1080;canvas.height=totalH;
  const W=canvas.width,H=canvas.height;
+ const round=(x,y,w,h,r)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r)};
  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#173553');bg.addColorStop(.55,'#101d32');bg.addColorStop(1,'#30243a');
  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
- ctx.fillStyle='#f2c66d';ctx.font='bold 54px system-ui';ctx.fillText('ROV ACCOUNT FOR SALE',58,85);
- ctx.fillStyle='#fff';ctx.font='bold 48px system-ui';ctx.fillText(x.username||'ROV ACCOUNT',58,160);
- ctx.fillStyle='#9ecfff';ctx.font='30px system-ui';ctx.fillText((x.category||'')+'  •  '+(x.status||'พร้อมขาย'),60,215);
- const cellW=(W-pad*2-gap*(cols-1))/cols;
+ ctx.fillStyle='#f2c66d';ctx.font='bold 48px system-ui';ctx.fillText('ROV ACCOUNT FOR SALE',pad,76);
+ ctx.fillStyle='#fff';ctx.font='bold 42px system-ui';
+ const username=String(x.username||'ROV ACCOUNT');
+ ctx.fillText(username, pad, 143, W-pad*2);
+ ctx.fillStyle='#a9d5ff';ctx.font='27px system-ui';
+ ctx.fillText((x.category||'')+'  •  '+(x.status||'พร้อมขาย'),pad,198,W-pad*2);
+ ctx.fillStyle='#b8c8dc';ctx.font='22px system-ui';
+ ctx.fillText('จัดเรียงรูปอัตโนมัติ  •  '+count+' รูป',pad,242);
  const loaded=await Promise.all(photos.map(src=>new Promise(resolve=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src})));
- if(!photos.length){ctx.fillStyle='#192b43';ctx.fillRect(pad,header,W-pad*2,cellH);ctx.fillStyle='#b5c6da';ctx.font='34px system-ui';ctx.fillText('ยังไม่ได้เพิ่มรูปภาพ',350,header+180)}
+ if(!count){
+  const y=header;ctx.fillStyle='#192b43';round(pad,y,W-pad*2,cellH,18);ctx.fill();
+  ctx.fillStyle='#b5c6da';ctx.font='32px system-ui';ctx.textAlign='center';ctx.fillText('ยังไม่ได้เพิ่มรูปภาพ',W/2,y+cellH/2);ctx.textAlign='left';
+ }
  loaded.forEach((im,i)=>{
-  if(!im)return;
-  const row=Math.floor(i/cols),col=i%cols,x0=pad+col*(cellW+gap),y0=header+row*(cellH+gap);
-  ctx.fillStyle='#091321';ctx.fillRect(x0,y0,cellW,cellH);
-  ctx.strokeStyle='#d6b66d';ctx.lineWidth=4;ctx.strokeRect(x0,y0,cellW,cellH);
-  const scale=Math.min((cellW-24)/im.width,(cellH-24)/im.height),w=im.width*scale,h=im.height*scale;
-  ctx.drawImage(im,x0+(cellW-w)/2,y0+(cellH-h)/2,w,h);
+  const row=Math.floor(i/cols),col=i%cols;
+  const inRow=Math.min(cols,count-row*cols);
+  const rowWidth=inRow*cellW+(inRow-1)*gap;
+  const x0=(W-rowWidth)/2+col*(cellW+gap),y0=header+row*(cellH+gap);
+  ctx.fillStyle='#091321';round(x0,y0,cellW,cellH,16);ctx.fill();
+  ctx.save();round(x0,y0,cellW,cellH,16);ctx.clip();
+  if(im){
+   const scale=Math.min((cellW-24)/im.width,(cellH-24)/im.height),w=im.width*scale,h=im.height*scale;
+   ctx.drawImage(im,x0+(cellW-w)/2,y0+(cellH-h)/2,w,h);
+  }else{
+   ctx.fillStyle='#b5c6da';ctx.font='20px system-ui';ctx.textAlign='center';ctx.fillText('เปิดรูปไม่สำเร็จ',x0+cellW/2,y0+cellH/2);ctx.textAlign='left';
+  }
+  ctx.restore();
+  ctx.strokeStyle='#d6b66d';ctx.lineWidth=3;round(x0,y0,cellW,cellH,16);ctx.stroke();
+  ctx.fillStyle='#f2c66d';round(x0+10,y0+10,48,34,10);ctx.fill();
+  ctx.fillStyle='#17243a';ctx.font='bold 19px system-ui';ctx.textAlign='center';ctx.fillText(String(i+1),x0+34,y0+34);ctx.textAlign='left';
  });
- const fy=header+rows*cellH+(rows-1)*gap+30;
- ctx.fillStyle='#f2c66d';ctx.fillRect(42,fy,996,3);
- ctx.fillStyle='#fff';ctx.font='bold 36px system-ui';ctx.fillText(x.details||'รายละเอียดสอบถามได้',58,fy+65,960);
- ctx.fillStyle='#d4dfed';ctx.font='30px system-ui';ctx.fillText(x.price?'ราคา '+x.price+' บาท':'สนใจสอบถามราคา',58,fy+125);
- ctx.fillStyle='#8fa8c5';ctx.font='22px system-ui';ctx.fillText('รูปภาพ '+photos.length+' รูป  •  ROV STOCK MANAGER',58,fy+185);
- $('posterHint').textContent='จัดเรียงรูปให้อัตโนมัติทั้งหมด '+photos.length+' รูป · '+cols+' คอลัมน์';
+ const fy=header+rows*cellH+(rows-1)*gap+28;
+ ctx.fillStyle='#f2c66d';ctx.fillRect(pad,fy,W-pad*2,3);
+ ctx.fillStyle='#fff';ctx.font='bold 31px system-ui';
+ const detail=String(x.details||'รายละเอียดสอบถามได้');
+ const words=detail.split(/\s+/);let line='',yy=fy+58;
+ for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>W-pad*2-20&&line){ctx.fillText(line,pad,yy);line=word;yy+=40}else line=test}
+ if(line&&yy<fy+145)ctx.fillText(line,pad,yy);
+ ctx.fillStyle='#d4dfed';ctx.font='29px system-ui';
+ ctx.fillText(x.price?'ราคา '+x.price+' บาท':'สนใจสอบถามราคา',pad,fy+170);
+ ctx.fillStyle='#8fa8c5';ctx.font='21px system-ui';
+ ctx.fillText('ทั้งหมด '+count+' รูป  •  ROV STOCK MANAGER',pad,fy+220);
+ $('posterHint').textContent='จัดเรียงอัตโนมัติ '+count+' รูป · '+cols+' คอลัมน์ · คงลำดับรูปเดิม · รูปไม่ถูกยืดหรือบิด';
  $('posterDialog').showModal();
 }
 $('closePoster').onclick=()=>$('posterDialog').close();
