@@ -164,8 +164,8 @@ async function makePoster(x){
  await drawPoster();
 }
 
-const SKIN_DATA_URLS=['https://dxawdc.github.io/rov-skins/data/skins.json','https://cdn.jsdelivr.net/gh/dxawdc/rov-skins@main/public/data/skins.json'];
-const SKIN_IMAGE_BASE='https://dxawdc.github.io/rov-skins';
+const SKIN_DATA_URLS=['https://cdn.jsdelivr.net/gh/dxawdc/rov-skins@main/public/data/skins.json','https://dxawdc.github.io/rov-skins/data/skins.json'];
+const SKIN_IMAGE_BASE='https://cdn.jsdelivr.net/gh/dxawdc/rov-skins@main/public';
 let skinCatalog=[],skinCatalogReady=false,skinCatalogRows=[],skinCatalogSelected=new Set(),skinCatalogLimit=90,skinCatalogSyncedAt='';
 function skinImageUrl(skin){
  const p=skin&&skin.poster||{};
