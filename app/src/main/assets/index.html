@@ -164,8 +164,8 @@ async function makePoster(x){
  await drawPoster();
 }
 
-const SKIN_DATA_URLS=['https://cdn.jsdelivr.net/gh/dxawdc/rov-skins@main/public/data/skins.json','https://dxawdc.github.io/rov-skins/data/skins.json'];
-const SKIN_IMAGE_BASE='https://cdn.jsdelivr.net/gh/dxawdc/rov-skins@main/public';
+const SKIN_DATA_URLS=['https://dxawdc.github.io/rov-skins/data/skins.json','https://cdn.jsdelivr.net/gh/dxawdc/rov-skins@main/public/data/skins.json'];
+const SKIN_IMAGE_BASE='https://dxawdc.github.io/rov-skins';
 let skinCatalog=[],skinCatalogReady=false,skinCatalogRows=[],skinCatalogSelected=new Set(),skinCatalogLimit=90,skinCatalogSyncedAt='';
 function skinImageUrl(skin){
  const p=skin&&skin.poster||{};
@@ -201,7 +201,8 @@ function renderSkinCatalog(){
  const rows=skinCatalog.filter(x=>(!hero||x.heroName===hero)&&(!quality||x.quality===quality)&&(!q||String(x.searchText||((x.heroName||'')+' '+(x.skinName||''))).toLowerCase().includes(q)));
  skinCatalogRows=rows;
  const shown=rows.slice(0,skinCatalogLimit);
- $('skinCatalogStatus').textContent='พบ '+rows.length.toLocaleString('th-TH')+' สกิน จากฐานข้อมูล · แสดง '+shown.length+' รายการ · อัปเดตต้นทาง '+(skinCatalogSyncedAt||'ไม่ทราบ');
+ const imageCount=rows.filter(x=>!!skinImageUrl(x)).length;
+ $('skinCatalogStatus').textContent='พบ '+rows.length.toLocaleString('th-TH')+' สกิน · มีภาพ '+imageCount.toLocaleString('th-TH')+' · แสดง '+shown.length+' รายการ · อัปเดตต้นทาง '+(skinCatalogSyncedAt||'ไม่ทราบ');
  $('skinCatalogGrid').innerHTML=shown.map((x,i)=>{
   const id=String(x.id||x.rowNumber||i),url=skinImageUrl(x),sel=skinCatalogSelected.has(id);
   return '<div class="skin-card '+(sel?'selected':'')+'" data-skin-id="'+esc(id)+'"><span class="skin-check">'+(sel?'✓':'＋')+'</span>'+(url?'<img loading="lazy" src="'+esc(url)+'" alt="'+esc(x.skinName||'ROV Skin')+'">':'<div style="height:112px;display:grid;place-items:center;color:#9aabc1;font-size:11px">ไม่มีรูป</div>')+'<div class="skin-meta"><b>'+esc(x.skinName||'ไม่ระบุชื่อ')+'</b><span>'+esc(x.heroName||'ไม่ระบุฮีโร่')+'</span><br><span>'+esc(x.quality||x.qualityTag||'')+'</span></div></div>';
