@@ -1,4 +1,4 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>ROV Stock Manager</title><style>
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1423"><title>ROV Stock Manager</title><style>
 *{box-sizing:border-box}body{margin:0;background:#0b1220;color:#edf3fb;font:15px system-ui,sans-serif}header,main{max-width:1000px;margin:auto;padding:17px}h1{margin:0;font-size:24px}.muted,small{color:#9aabc1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:15px 0}.stat,.card{background:#142136;border:1px solid #2b3b52;border-radius:13px;padding:13px}.stat b{display:block;font-size:25px}.g{color:#43d39e}.y{color:#f5c766}.r{color:#ff8585}button,input,select,textarea{font:inherit;border:1px solid #2b3b52;border-radius:9px;padding:10px;background:#0c1728;color:#edf3fb}button{cursor:pointer;background:#263b58;font-weight:650}.primary{background:#176fc0}.ok{background:#176b4c}.danger{background:#71343b}.actions{display:flex;gap:8px;flex-wrap:wrap}.toolbar{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin:14px 0}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.top{display:flex;justify-content:space-between;gap:8px}.user{font-weight:750;overflow-wrap:anywhere}.cat{font-size:12px;color:#83bfff}.detail{font-size:13px;color:#cbd7e6;margin:12px 0;overflow-wrap:anywhere}.photo{width:100%;max-height:240px;object-fit:contain;background:#0b1220;border:1px solid #2b3b52;border-radius:10px;margin:8px 0}.preview{width:100%;max-height:190px;object-fit:contain;background:#0b1220;border:1px solid #2b3b52;border-radius:9px;margin-top:8px}.photo-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tag{font-size:11px;padding:5px 8px;border-radius:20px;background:#24364e;white-space:nowrap}.btns{display:flex;gap:6px}.btns button{flex:1;font-size:12px;padding:8px 4px}.hint{font-size:12px;color:#9aabc1;margin:10px 0}/* Bulk tools, smart checks and recovery */
 .bulkbar{display:none;background:#14243a;border:1px solid #456080;border-radius:14px;padding:11px;margin:10px 0;gap:8px;align-items:center;flex-wrap:wrap}.bulkbar.show{display:flex}.bulkbar select{flex:1;min-width:120px}.pick{display:flex;align-items:center;gap:7px;color:#f2d28e;font-size:12px;margin-bottom:9px}.pick input{width:20px;height:20px;min-height:20px;accent-color:#69baff}.history-item{padding:10px;border:1px solid #344b68;border-radius:10px;margin:7px 0;font-size:13px}.history-item small{display:block;margin-top:4px}.smart-note{color:#f2d28e;font-size:12px;margin-top:6px}
 .empty{text-align:center;padding:30px;color:#9aabc1;grid-column:1/-1}dialog{width:min(540px,95vw);background:#142136;color:#edf3fb;border:1px solid #2b3b52;border-radius:14px;padding:0}dialog::backdrop{background:#000b}.dh,.df{padding:13px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #2b3b52}.df{border:0;border-top:1px solid #2b3b52;justify-content:flex-end}.form{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.form label{font-size:12px;color:#9aabc1;display:flex;flex-direction:column;gap:5px}.wide{grid-column:1/-1}textarea{resize:vertical}footer{text-align:center;color:#9aabc1;font-size:11px;padding:20px}@media(max-width:650px){.stats{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.cards{grid-template-columns:1fr}}@media(max-width:380px){.toolbar,.form{grid-template-columns:1fr}.toolbar input,.wide{grid-column:auto}}
@@ -198,6 +198,186 @@ dialog form{min-width:0}
 }
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
+
+/* ROV Stock Manager — redesign / component / style system */
+:root{
+ --bg:#080d18;--surface:#101a2b;--surface-2:#16243a;--surface-3:#1c2e49;
+ --line:#2b405e;--line-strong:#456486;--ink:#f4f7fc;--muted:#a6b5c9;
+ --gold:#e8bd68;--gold-soft:#47391f;--blue:#65b9f5;--green:#54d6a5;
+ --red:#ff8995;--radius:16px;--shadow:0 12px 32px #0004;
+}
+html{background:var(--bg);scroll-padding-top:84px}
+body{
+ background:
+ radial-gradient(ellipse at 50% -18%,#24456b66,transparent 46%),
+ linear-gradient(180deg,#0b1423 0%,var(--bg) 58%);
+ color:var(--ink);font-size:15px;line-height:1.55;
+}
+header,main{max-width:1120px}
+header{padding-top:28px;padding-bottom:18px}
+header h1{font-size:clamp(24px,4vw,34px);letter-spacing:.4px}
+header>small{font-size:13px;color:var(--muted)}
+header .stats{margin:22px 0 16px;gap:12px}
+.stat,.dashbox,.sales-kpi{
+ background:linear-gradient(145deg,#172942,#101a2b);
+ border:1px solid var(--line);border-radius:var(--radius);
+ box-shadow:var(--shadow);
+}
+.stat{padding:16px;min-height:96px}
+.stat small,.dashbox small,.sales-kpi small{color:var(--muted);font-size:12px}
+.stat b{font-size:30px;line-height:1.2}
+.actions{gap:9px}
+button{
+ min-height:43px;border-radius:11px;padding:10px 13px;
+ background:linear-gradient(180deg,#263d5d,#1b2e48);
+ border:1px solid #3c587b;box-shadow:none;font-weight:700;
+}
+button:hover{filter:brightness(1.13);border-color:#78b9e9}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+ outline:2px solid var(--blue);outline-offset:2px;
+}
+button.primary{background:linear-gradient(135deg,#258bd2,#17609f);border-color:#54a9e7}
+button.ok{background:linear-gradient(135deg,#16835f,#10563f);border-color:#35a77d}
+button.danger{background:linear-gradient(135deg,#853e4c,#5d2a35);border-color:#a75b69}
+.dashnav{
+ top:0;margin:8px 0 18px;padding:7px;gap:7px;
+ border:1px solid #304866;border-radius:15px;
+ background:#0c1728ed;box-shadow:0 8px 24px #0005;
+}
+.dashnav button{border-color:transparent;background:transparent;box-shadow:none}
+.dashnav button.active{background:linear-gradient(135deg,#277fb9,#185582);border-color:#5aa9dc}
+.dashboard{gap:15px}
+.dashwelcome{
+ padding:22px;border:1px solid #4b6381;border-radius:20px;
+ background:linear-gradient(115deg,#1b3858,#1d2941 62%,#352b43);
+ box-shadow:var(--shadow);
+}
+.dashwelcome h2{font-size:clamp(20px,3vw,25px)}
+.dashwelcome p{color:#c5d2e2;line-height:1.6}
+.dashsection{font-size:15px;color:#f0d39a;margin:8px 0}
+.catrows{gap:9px}
+.catrow{
+ padding:13px 14px;border:1px solid var(--line);border-radius:13px;
+ background:linear-gradient(110deg,#14243a,#101a2b);
+}
+.catrow b{color:var(--gold)}
+.catrow .bar{height:8px;background:#263952}
+.catrow .bar i{background:linear-gradient(90deg,#5eb8ef,#e7bd69)}
+.toolbar{
+ grid-template-columns:minmax(180px,2fr) repeat(2,minmax(125px,1fr)) auto;
+ gap:9px;margin:16px 0 12px;
+}
+input,select,textarea{
+ min-height:45px;padding:11px 12px;border-radius:11px;
+ color:var(--ink);background:#0b1525;border:1px solid #344b69;
+}
+input::placeholder,textarea::placeholder{color:#7f91aa}
+.hint{color:var(--muted);line-height:1.55}
+#count{padding:8px 2px;color:#b9c8da}
+.category-group{margin:20px 0 24px}
+.category-heading{
+ padding:13px 16px;margin-bottom:12px;border-radius:14px;
+ background:linear-gradient(105deg,#1c3553,#14243a);
+ border:1px solid #49617e;box-shadow:0 6px 18px #0002;
+}
+.category-heading strong{font-size:16px;color:#f2d69d}
+.category-heading span{color:#c0cede}
+.cards{gap:12px}
+.card{
+ padding:15px;border-radius:16px;border:1px solid #314966;
+ background:linear-gradient(155deg,#172840,#101a2a 72%);
+ box-shadow:0 8px 22px #0003;
+}
+.card .top{align-items:center}
+.user{font-size:16px;font-weight:800;letter-spacing:.15px}
+.detail{font-size:14px;line-height:1.65;color:#d3deeb;margin:11px 0}
+.tag{font-size:11px;letter-spacing:.2px;padding:6px 10px}
+.card .btns{gap:7px;padding-top:13px}
+.card .btns button{font-size:12px;border-radius:9px}
+.multi-preview{gap:8px}
+.multi-preview img{height:100px;object-fit:cover;border:1px solid #3c5574;border-radius:10px}
+.category-image-gallery{gap:20px}
+.gallery-category{
+ padding:14px;border-radius:16px;border:1px solid #405a78;
+ background:linear-gradient(145deg,#14243a,#0e1929);
+ box-shadow:var(--shadow);
+}
+.gallery-category-head{font-size:15px;color:#f1d39a;margin-bottom:13px}
+.gallery-category-head span:last-child{
+ color:#b9c9dc;font-size:12px;background:#203650;border:1px solid #395675;
+ border-radius:30px;padding:4px 9px;white-space:nowrap;
+}
+.image-account{
+ padding:11px;border-radius:13px;border:1px solid #334d6b;
+ background:#101d30;
+}
+.image-account-title{font-size:14px;color:#f5f7fb}
+.image-account-photos{grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px}
+.image-account-photos button{
+ overflow:hidden;border:1px solid #344e6d;background:#091321;
+ padding:3px;border-radius:10px;
+}
+.image-account-photos button:hover{border-color:var(--gold);transform:translateY(-1px)}
+.image-account-photos img{height:135px;object-fit:contain}
+.image-account-meta{line-height:1.5;color:var(--muted)}
+.gallery-empty,.empty,.sales-empty{
+ padding:30px;border-radius:15px;border:1px dashed #49617d;
+ background:#111e30;color:#afbed1;
+}
+.bulkbar{background:#14243a;border-color:#405b7a;border-radius:14px}
+.sales-kpis{gap:11px}
+.sales-kpi{padding:15px}
+.sales-kpi b{font-size:25px}
+.sales-card{
+ border:1px solid #385b5a;background:linear-gradient(145deg,#172c34,#101c2b);
+ border-radius:15px;padding:15px;
+}
+.sales-card .rid{background:#243d70;border:1px solid #45649b}
+.sales-card .money{color:var(--green)}
+.sales-table-wrap{border-color:var(--line);border-radius:14px}
+.sales-table th{background:#1a2d47;color:#f1d39a}
+.sales-table th,.sales-table td{border-color:#2b405c}
+dialog{
+ background:#111e30;border:1px solid #49617d;border-radius:18px;
+ box-shadow:0 24px 80px #000a;
+}
+.dh,.df{background:#14243a;border-color:#304866}
+.dh b{color:#f1d39a}
+.form{gap:13px;padding:16px}
+.form label,.poster-controls label{font-size:13px;color:#b9c8da}
+#galleryPhotoDialog{padding:0}
+#galleryPhotoDialog img{max-height:78dvh}
+footer{max-width:1120px;margin:auto;color:#7f91aa}
+@media(max-width:700px){
+ header{padding-top:18px}
+ .toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .toolbar input{grid-column:1/-1}
+ .toolbar button{font-size:13px;padding:9px 7px}
+ .dashnav{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .dashnav button{font-size:12px;padding:9px 4px}
+ .category-group{margin:16px 0 20px}
+ .category-heading{padding:12px 13px}
+ .cards{grid-template-columns:minmax(0,1fr)}
+ .card{padding:14px}
+ .image-account-photos{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .image-account-photos img{height:112px}
+ .sales-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:390px){
+ header .stats{gap:7px}
+ .stat{padding:11px;min-height:82px}
+ .stat b{font-size:23px}
+ .toolbar{grid-template-columns:minmax(0,1fr)}
+ .toolbar input{grid-column:auto}
+ .image-account-photos{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sales-kpis{grid-template-columns:minmax(0,1fr)}
+ .sales-kpi:last-child{grid-column:auto}
+}
+@media(hover:hover){
+ .card:hover{border-color:#55779b;transform:translateY(-2px)}
+ .catrow:hover{border-color:#668bb0}
 }
 
 </style></head><body><header><h1>⚔️ ROV STOCK MANAGER</h1><small>จัดการสต๊อกไอดี</small><div class="stats"><div class="stat"><small>ทั้งหมด</small><b id="n">0</b></div><div class="stat"><small>พร้อมขาย</small><b class="g" id="a">0</b></div><div class="stat"><small>จองแล้ว</small><b class="y" id="b">0</b></div><div class="stat"><small>ขายแล้ว</small><b class="r" id="s">0</b></div></div><div class="actions"><button class="primary" id="add">＋ เพิ่มไอดี</button><button id="backup">ส่งออก JSON</button><button id="restore">นำเข้า JSON</button><button id="csv">ส่งออก CSV</button><input id="file" type="file" accept=".json" hidden></div></header><main><nav class="dashnav"><button id="tabDashboard" class="active">▦ ภาพรวม</button><button id="tabInventory">☷ คลังไอดี</button><button id="tabSales">▤ รายงานขาย</button></nav><section id="dashboardPanel" class="dashboard"><div class="dashwelcome"><h2>ยินดีต้อนรับสู่ ROV Stock</h2><p>ภาพรวมคลังสินค้า ตรวจสถานะ และดูหมวดหมู่ทั้งหมดในหน้าเดียว</p></div><div class="dashgrid" id="dashStats"></div><div><div class="dashsection">คลังแยกตามหมวดหมู่</div><div class="catrows" id="dashCategories"></div></div><div><div class="dashsection">สถานะสต๊อก</div><div class="dashgrid" id="dashStatus"></div></div><div><div class="dashsection">ตรวจสุขภาพข้อมูล</div><div class="health" id="dashHealth"></div></div><div class="actions"><button class="primary" id="dashAdd">＋ เพิ่มไอดีใหม่</button><button id="dashGoStock">เปิดคลังไอดี</button></div></section><section id="inventoryPanel" hidden><div class="toolbar"><input id="q" placeholder="ค้นหายูส / ตัวละคร / รายละเอียด"><select id="catFilter"><option value="">ทุกหมวดหมู่</option></select><select id="st"><option value="">ทุกสถานะ</option><option>พร้อมขาย</option><option>จองแล้ว</option><option>ขายแล้ว</option></select><button id="clear">ล้างตัวกรอง</button><button id="imageViewToggle">ดูรูปตามหมวด</button><button id="multi">☑ เลือกหลายรายการ</button></div><div class="bulkbar" id="bulkbar"><b id="selectedCount">เลือก 0 รายการ</b><select id="bulkStatus"><option value="">เปลี่ยนสถานะเป็น...</option><option>พร้อมขาย</option><option>จองแล้ว</option><option>ขายแล้ว</option></select><button class="primary" id="applyBulk">ใช้กับที่เลือก</button><button class="danger" id="deleteBulk">ลบที่เลือก</button><button id="exitMulti">เสร็จ</button></div><div class="hint" id="count"></div><div class="cards" id="list"></div><section id="categoryImageGallery" class="category-image-gallery" hidden></section></section><section id="salesPanel" hidden><div class="dashwelcome"><h2>รายงานการขาย ROV</h2><p>บันทึกอัตโนมัติจากรายการที่ยืนยันขายในคลังไอดี</p></div><div class="sales-kpis" id="salesKpis"></div><div class="sales-toolbar"><input id="salesQ" placeholder="ค้นหาเลขรายงาน / ยูส / ลูกค้า"><select id="salesPeriod"><option value="all">ทุกช่วงเวลา</option><option value="today">วันนี้</option><option value="month">เดือนนี้</option></select><select id="salesSort"><option value="new">ใหม่ไปเก่า</option><option value="old">เก่าไปใหม่</option><option value="high">ราคาสูงไปต่ำ</option><option value="low">ราคาต่ำไปสูง</option></select></div><div class="sales-toolbar"><button id="salesCards" class="active">▦ แบบการ์ด</button><button id="salesTable">☷ แบบตาราง</button><button id="salesExport">ส่งออก CSV</button></div><details class="sales-card"><summary><b>ตั้งค่าการส่งรายงาน Telegram</b></summary><p class="meta">ใส่ URL ของ Cloudflare Worker ที่ติดตั้งไว้ ระบบจะส่งรายงานเมื่อยืนยันการขายใหม่</p><label>Worker URL<input id="telegramEndpoint" type="url" placeholder="https://ชื่อ-worker.บัญชี.workers.dev"></label><div class="sales-toolbar"><button id="telegramSave" class="primary">บันทึกการตั้งค่า</button><button id="telegramTest">ส่งข้อความทดสอบ</button></div><div id="telegramConfigStatus" class="meta">ยังไม่ได้ตั้งค่า Telegram</div></details><div id="salesList"></div></section></main><footer>ข้อมูลบันทึกอัตโนมัติในอุปกรณ์นี้ (Local Storage) · แนะนำส่งออก JSON เพื่อสำรองข้อมูลเป็นระยะ</footer>
